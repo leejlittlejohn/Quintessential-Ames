@@ -1,0 +1,89 @@
+
+%% Having seen some 40+ residential properties for sale over the last year,
+ I can safely say that the housing market is very subjective, 
+ each property is unique for frequently unquantifiable reasons. 
+
+ Now if the goal is to give estimates to potential sellers, then this model and a short survey could 
+ do that, to some degree.
+
+ So, instead of focusing today on a particularly actionable insight, 
+ I would like to instead walk through the various procedures I used to achieve a consistent set of models.
+
+%% As you well know, this data was collected by the Ames Iowa Assessors Office between 2006 and 2010 for,
+like Assessors offices are want to do, tax assessment purposes. 
+It was originally presented as project data for a university course on linear regression at Truman State in Missouri, 
+and it contains 80 potentially impactful variables, including 23 categorical and 23 ordinal features, 
+which as you well know can be spread out by using dummy variables or one hot encoding to hundreds of features.
+So, I decided to clean, analyze, and explore them individually.
+
+%% This little ditty plots numeric variables against the target, including potential transforms.
+This gives a good idea of whether or not a feature's null values are even worth investigating. 
+Also you can see if the variable shows a linear relationship with the target and outliers at a glance. %%
+
+%% Cat Compare, wouldja ever guess it compares categorical variables to the target. and displays their value counts. %%
+
+$$ The function "chop" keeps a running tally of features on the "chopping_block" 
+that do not show linearity or show extreme collinearity with another feature that has already been chosen for further analysis. 
+This allows for easy data frame simplification, periodically removing features that require no further cleaning or analysis, 
+because they will not be used for modeling.$$
+
+$$ The functions "lm_tester," "lasso_tester," and "ridge_tester" run identically in structure.  
+These functions take as input a dataframe of feature subsets generated in the previous section, 
+execute SciKit Learn's train_test_split, build a model, 
+and return the $R^2$ scores for both the training split and the testing split, as well as the $RMSE$. 
+These functions all also return a distribution histogram of the errors in order to continuously 
+check the models' adherence to the Normality of Errors assumption required for MLR.$$
+
+$$ Talk about null values. A little of this, a little of that. Cross referencing for things like basements and garages.
+
+%% This may not look like much, but it did slightly improve model performance. It also nullififed the effect of transforming the target.
+
+%% I created a series of dataframes with different subsets of features in order to rapidly plug them in to my little helpers. 
+Since the different ways to account for square footage had the highest correlation coefficients, 
+I though I would start with permutations of those features.
+
+%% Better performing models ended in 1 and 3, 
+corresponding to subsets that had both separate and 
+combined features for square footage and subsets that had undergone logarithmic transformations.
+
+Using the Lasso, Ridge, and GridSearchCV capabilities of SciKit Learn had no consistent effect of improving model performance, 
+since the models were generally well fit. 
+An attempt to transform the target variable was made, 
+but it produced extreme heteroscedasticity in the errors so that technique could not be utilized.
+
+Despite Lasso, Ridge, and using GridSearchCV, the consistently best performing model was good, 
+old fashioned MLR used on the dfd3 subset of features. 
+
+This model generated a training $R^2$ of 0.8856, a testing $R^2$ of 0.8713, and an $RMSE$ of 25,526.63.
+
+%% Uninterpretable models that can't be explained For the sake of model performance. -- no contextyual knowledge, so making predictions isn't as useful as just building a model
+
+
+
+P2 NOTES FOR OTHERS:
+
+Bryan
+Glow: Love the framing of the problem.
+
+Grow: Some of the graphs were difficult to interpret, pretty complex and you're a real fast talker so they swept by pretty quickly
+
+Marina
+Glow: thorough feature engineering and selection, love to see it
+good analysis of model shortcomings
+
+Grow: a bit monotonous visually
+
+Andrew
+Glow: Liked the neighborhood analysis, good identification of what can go wrong with this approach, contrasting with onehotencoding
+
+Grow: perhaps the same visual monotony criticism, I thought it was a thorough exploration all in all
+
+Upasana:
+Glow: I like the "Correlation Matrix with Neighborhood Slide," I hadn't managed to parse through the neighborhoods like that, by correlation.
+Liked the inclusion of month sold, I think the rest of us intentionally dropped that feature
+
+Grow: charts are difficult to read, visualizations should be somewhat interpretable without explicit commentary, not quite accurate analysis of results
+
+
+REMOVE TODOS
+
